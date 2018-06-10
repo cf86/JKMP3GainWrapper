@@ -25,39 +25,60 @@ If you don't want to build it yourself, there is also an already compiled versio
 
 It is just a simple wrapper for MP3Gain. In order to run, it needs a working MP3Gain installation or binary (**mp3gain.exe** for windows or **mp3gain** for e.g. linux based OS'). To instantiate simply use the constructor and provide the path to the MP3Gain binary and optionally change the targetDB and the timestamp option. Per default the target DB is 89. Per default the timestamps of your MP3 file will not be overwritten. Even if MP3Gain writes a new tag, the last modified date of the file itself remains unchanged. 
 ```java
-Mp3Gain g = new Mp3Gain("path/to/MP3Gain/binary")
+// Java
+MP3Gain g = new MP3Gain("path/to/MP3Gain/binary")
+// Kotlin
+val g = MP3Gain("path/to/MP3Gain/binary")
 ```
 
 most methods offer an additional parameter called MP3GainThread. This class extends runnable and gets the Error Inputstream of MP3Gain as a parameter and is started by each method itself. Using this thread GUIs for example can show current process.
 
 Afterwards the following methods can be used. It should be mentioned that it only works with up to 15 files, don't ask me why.
 ```java
+// Java
 Boolean deleteStoredTagInfo(List<String> files)
+// Kotlin
+fun deleteStoredTagInfo(files: List<String>): Boolean
 ```
 deletes the stored MP3Gain Tags (parameter: _-s d_)
 
 ```java
+// Java
 List<UndoMp3GainChange> undoMp3gainChanges(List<String> files, MP3GainThread thread)
+// Kotlin
+fun undoMp3gainChanges(files: List<String>, thread: MP3GainThread? = null): List<UndoMP3GainChange>
 ```
 Undo the changes for the given Files (parameter: _-u_)
 
 ```java
+// Java
 List<ApplyGainChange> applyTrackGain(List<String>files, Boolean untilNoClipping, MP3GainThread thread) 
+// Kotlin
+fun applyTrackGain(files: List<String>, untilNoClipping: Boolean = false, thread: MP3GainThread? = null): List<ApplyGainChange>
 ```
 applies the track gain so that it will be normalized to default gain. If _untilNoClipping_ is true, the default gain will be ignored and automatically lowered until no clipping occurs. (parameter: _-r -o [-p] [-k] [-d x]_)
 
 ```java
+// Java
 List<ApplyGainChange> applyAlbumGain(List<String> files, Boolean untilNoClipping, MP3GainThread thread)
+// Kotlin
+fun applyAlbumGain(files: List<String>, untilNoClipping: Boolean = false, thread: MP3GainThread? = null): List<ApplyGainChange>
 ```
 applies the album gain so that it will be normalized to default gain (parameter: _-a -o [-p] [-k] [-d x]_)
 
 ```java
+// Java
 List<RecommendedGainChange> analyzeGain(List<String> files, MP3GainThread thread) 
+// Kotlin
+fun analyzeGain(files: List<String>, thread: MP3GainThread? = null): List<RecommendedGainChange>
 ```
 reads the tag info for the given files. Containing DB and Gain Changes for Track and Album (parameter: _-s r / -s c_)
 
 ```java
+// Java
 List<AddGainChange> addGain(List<String> files, Integer gain, MP3GainThread thread) 
+// Kotlin
+fun addGain(files: List<String>, gain: Int, thread: MP3GainThread? = null): List<AddGainChange>
 ```
 adds a given gain value to the file. 1 gain = 1.5 DB (parameter: _-g x_)
 
