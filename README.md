@@ -61,5 +61,7 @@ List<AddGainChange> addGain(List<String> files, Integer gain, MP3GainThread thre
 ```
 adds a given gain value to the file. 1 gain = 1.5 DB (parameter: _-g x_)
 
+## Copyright
 
+Copyright (c) 2018 Christian Feier (Christian.Feier@gmail.com). See licence.txt for details.
 
