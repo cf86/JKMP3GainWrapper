@@ -4,6 +4,7 @@ import com.cf.jkmp3gainwrapper.entity.AddGainChange
 import com.cf.jkmp3gainwrapper.entity.ApplyGainChange
 import com.cf.jkmp3gainwrapper.entity.RecommendedGainChange
 import com.cf.jkmp3gainwrapper.entity.UndoMP3GainChange
+import com.cf.jkmp3gainwrapper.exception.MP3GainException
 import org.slf4j.LoggerFactory
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -26,6 +27,7 @@ class MP3Gain(var mp3gainPath: String,
      *
      * @return true if Tag is deleted, else false
      */
+    @Throws(MP3GainException::class)
     fun deleteStoredTagInfo(files: List<String>): Boolean {
         logger.info("Delete Stored Tag Info from: $files")
         try {
@@ -45,7 +47,7 @@ class MP3Gain(var mp3gainPath: String,
             return true
         } catch (e: Exception) {
             logger.error("Error while deleting stored Tag Info from: $files", e)
-            return false
+            throw MP3GainException("Error while deleting stored Tag Info from: $files", e)
         }
     }
 
@@ -58,6 +60,7 @@ class MP3Gain(var mp3gainPath: String,
      *
      * @return a list with the files and made changes. If changes are made it contains information about the changed track and album Gain Changes
      */
+    @Throws(MP3GainException::class)
     @JvmOverloads
     fun undoMp3gainChanges(files: List<String>, thread: MP3GainThread? = null): List<UndoMP3GainChange> {
         logger.info("Undoing mp3gain changes from: $files")
@@ -96,7 +99,7 @@ class MP3Gain(var mp3gainPath: String,
             return result
         } catch (e: Exception) {
             logger.error("Error while undoing mp3gain changes from: $files", e)
-            return listOf()
+            throw MP3GainException("Error while undoing mp3gain changes from: $files", e)
         }
     }
 
@@ -110,6 +113,7 @@ class MP3Gain(var mp3gainPath: String,
      *
      * @return a list of changes applied
      */
+    @Throws(MP3GainException::class)
     @JvmOverloads
     fun applyTrackGain(files: List<String>, untilNoClipping: Boolean = false, thread: MP3GainThread? = null): List<ApplyGainChange> {
         logger.info("Apply Track gain to: $files; until no clipping: $untilNoClipping, targetDB: $targetDB")
@@ -151,7 +155,7 @@ class MP3Gain(var mp3gainPath: String,
             return result
         } catch (e: Exception) {
             logger.error("Error while applying track gain changes from: $files", e)
-            return listOf()
+            throw MP3GainException("Error while applying track gain changes from: $files", e)
         }
     }
 
@@ -165,6 +169,7 @@ class MP3Gain(var mp3gainPath: String,
      *
      * @return a list of changes applied
      */
+    @Throws(MP3GainException::class)
     @JvmOverloads
     fun applyAlbumGain(files: List<String>, untilNoClipping: Boolean = false, thread: MP3GainThread? = null): List<ApplyGainChange> {
         logger.info("Apply Album gain to: $files; until no clipping: $untilNoClipping, targetDB: $targetDB")
@@ -206,7 +211,7 @@ class MP3Gain(var mp3gainPath: String,
             return result
         } catch (e: Exception) {
             logger.error("Error while applying album gain changes from: $files", e)
-            return listOf()
+            throw MP3GainException("Error while applying album gain changes from: $files", e)
         }
     }
 
@@ -219,6 +224,7 @@ class MP3Gain(var mp3gainPath: String,
      *
      * @return a list with the recommended changes for each file
      */
+    @Throws(MP3GainException::class)
     @JvmOverloads
     fun analyzeGain(files: List<String>, thread: MP3GainThread? = null): List<RecommendedGainChange> {
         logger.info("Apply Album gain to: $files; targetDB: $targetDB")
@@ -268,7 +274,7 @@ class MP3Gain(var mp3gainPath: String,
             return result
         } catch (e: Exception) {
             logger.error("Error while applying album gain changes from: $files", e)
-            return listOf()
+            throw MP3GainException("Error while applying album gain changes from: $files", e)
         }
     }
 
@@ -282,6 +288,7 @@ class MP3Gain(var mp3gainPath: String,
      *
      * @return a list of changes which are applied
      */
+    @Throws(MP3GainException::class)
     @JvmOverloads
     fun addGain(files: List<String>, gain: Int, thread: MP3GainThread? = null): List<AddGainChange> {
         logger.info("Add $gain gain to: $files")
@@ -310,7 +317,7 @@ class MP3Gain(var mp3gainPath: String,
             return files.map { AddGainChange(it, gain) }
         } catch (e: Exception) {
             logger.error("Error while adding gain to: $files", e)
-            return listOf()
+            throw MP3GainException("Error while adding gain to: $files", e)
         }
     }
 }
