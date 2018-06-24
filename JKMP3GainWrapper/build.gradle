@@ -1,5 +1,5 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.2.41"
+    id "org.jetbrains.kotlin.jvm" version "1.2.50"
     id "java"
     id "maven"
 }
@@ -26,7 +26,7 @@ compileTestKotlin {
 }
 
 dependencies {
-    compileOnly "ch.qos.logback:logback-classic:1.1.7"
-    compileOnly "org.slf4j:jcl-over-slf4j:1.7.21"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41"
+    compileOnly "ch.qos.logback:logback-classic:+"
+    compileOnly "org.slf4j:jcl-over-slf4j:+"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:+"
 }

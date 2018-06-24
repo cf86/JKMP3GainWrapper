@@ -86,7 +86,6 @@ class MP3Gain(var mp3gainPath: String,
                 }
             }
 
-
             val result = mutableListOf<UndoMP3GainChange>()
             BufferedReader(InputStreamReader(currentProcess.inputStream)).forEachLine {
                 val entries = it.split("\t")
