@@ -20,6 +20,32 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
     }
 
     /**
+     * Gets the Version as a String e.g. 1.4.6
+     *
+     * @return the version as a String
+     */
+    @Throws(MP3GainException::class)
+    fun getVersion(): String? {
+        logger.info("get Mp3gain version.")
+        try {
+            val cmd = mutableListOf(mp3gainPath, "-v")
+
+            logger.info("call: ${cmd.toList()}")
+            val currentProcess = Runtime.getRuntime().exec(cmd.toTypedArray())
+
+            var result: String? = null
+            BufferedReader(InputStreamReader(currentProcess.errorStream)).forEachLine {
+                result = it.split(" ").last()
+            }
+
+            return result
+        } catch (e: Exception) {
+            logger.error("Error while getting version.", e)
+            throw MP3GainException("Error while getting version.", e)
+        }
+    }
+
+    /**
      * deletes the stored MP3Gain Tags (parameter: -s d)
      * ATTENTION: Only works with up to 15 files
      *
