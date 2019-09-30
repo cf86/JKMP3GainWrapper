@@ -9,14 +9,13 @@ import org.slf4j.LoggerFactory
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
-                                        var targetDB: Int = 89,
-                                        var preserveTimestamp: Boolean = true) {
-
-    private val logger = LoggerFactory.getLogger(this.javaClass)
+class MP3Gain @JvmOverloads constructor(private var mp3gainPath: String,
+                                        private var targetDB: Int = 89,
+                                        private var preserveTimestamp: Boolean = true) {
 
     companion object {
         private const val MAX_FILES = 15
+        private val logger = LoggerFactory.getLogger(this.javaClass)
     }
 
     /**
@@ -26,11 +25,11 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
      */
     @Throws(MP3GainException::class)
     fun getVersion(): String? {
-        logger.info("get Mp3gain version.")
+        logger.debug("get Mp3gain version.")
         try {
             val cmd = mutableListOf(mp3gainPath, "-v")
 
-            logger.info("call: ${cmd.toList()}")
+            logger.debug("call: ${cmd.toList()}")
             val currentProcess = Runtime.getRuntime().exec(cmd.toTypedArray())
 
             var result: String? = null
@@ -55,7 +54,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
      */
     @Throws(MP3GainException::class)
     fun deleteStoredTagInfo(files: List<String>): Boolean {
-        logger.info("Delete Stored Tag Info from: $files")
+        logger.debug("Delete Stored Tag Info from: $files")
         try {
             if (files.size > MAX_FILES)
                 throw IllegalArgumentException("Can't process more than 15 files. Given: ${files.size}")
@@ -65,7 +64,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
                 cmd.add("-p")
             cmd.addAll(files)
 
-            logger.info("call: ${cmd.toList()}")
+            logger.debug("call: ${cmd.toList()}")
             val currentProcess = Runtime.getRuntime().exec(cmd.toTypedArray())
 
             currentProcess.waitFor()
@@ -89,7 +88,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
     @JvmOverloads
     @Throws(MP3GainException::class)
     fun undoMp3gainChanges(files: List<String>, thread: MP3GainThread? = null): List<UndoMP3GainChange> {
-        logger.info("Undoing mp3gain changes from: $files")
+        logger.debug("Undoing mp3gain changes from: $files")
         try {
             if (files.size > MAX_FILES)
                 throw IllegalArgumentException("Can't process more than 15 files. Given: ${files.size}")
@@ -99,7 +98,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
                 cmd.add("-p")
             cmd.addAll(files)
 
-            logger.info("call: ${cmd.toList()}")
+            logger.debug("call: ${cmd.toList()}")
             val currentProcess = Runtime.getRuntime().exec(cmd.toTypedArray())
 
             // if error stream is not used this will not work
@@ -108,7 +107,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
                 thread.start()
             } else {
                 BufferedReader(InputStreamReader(currentProcess.errorStream)).forEachLine {
-                    if (it.isNotBlank()) logger.info(it)
+                    if (it.isNotBlank()) logger.debug(it)
                 }
             }
 
@@ -141,7 +140,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
     @JvmOverloads
     @Throws(MP3GainException::class)
     fun applyTrackGain(files: List<String>, untilNoClipping: Boolean = false, thread: MP3GainThread? = null): List<ApplyGainChange> {
-        logger.info("Apply Track gain to: $files; until no clipping: $untilNoClipping, targetDB: $targetDB")
+        logger.debug("Apply Track gain to: $files; until no clipping: $untilNoClipping, targetDB: $targetDB")
         try {
             if (files.size > MAX_FILES)
                 throw IllegalArgumentException("Can't process more than 15 files. Given: ${files.size}")
@@ -155,7 +154,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
                 cmd.addAll(listOf("-d", (targetDB - 89).toString()))
             cmd.addAll(files)
 
-            logger.info("call: ${cmd.toList()}")
+            logger.debug("call: ${cmd.toList()}")
             val currentProcess = Runtime.getRuntime().exec(cmd.toTypedArray())
 
             // if error stream is not used this will not work
@@ -164,7 +163,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
                 thread.start()
             } else {
                 BufferedReader(InputStreamReader(currentProcess.errorStream)).forEachLine {
-                    if (it.isNotBlank()) logger.info(it)
+                    if (it.isNotBlank()) logger.debug(it)
                 }
             }
 
@@ -197,7 +196,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
     @JvmOverloads
     @Throws(MP3GainException::class)
     fun applyAlbumGain(files: List<String>, untilNoClipping: Boolean = false, thread: MP3GainThread? = null): List<ApplyGainChange> {
-        logger.info("Apply Album gain to: $files; until no clipping: $untilNoClipping, targetDB: $targetDB")
+        logger.debug("Apply Album gain to: $files; until no clipping: $untilNoClipping, targetDB: $targetDB")
         try {
             if (files.size > MAX_FILES)
                 throw IllegalArgumentException("Can't process more than 15 files. Given: ${files.size}")
@@ -211,7 +210,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
                 cmd.addAll(listOf("-d", (targetDB - 89).toString()))
             cmd.addAll(files)
 
-            logger.info("call: ${cmd.toList()}")
+            logger.debug("call: ${cmd.toList()}")
             val currentProcess = Runtime.getRuntime().exec(cmd.toTypedArray())
 
             // if error stream is not used this will not work
@@ -220,7 +219,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
                 thread.start()
             } else {
                 BufferedReader(InputStreamReader(currentProcess.errorStream)).forEachLine {
-                    if (it.isNotBlank()) logger.info(it)
+                    if (it.isNotBlank()) logger.debug(it)
                 }
             }
 
@@ -252,7 +251,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
     @JvmOverloads
     @Throws(MP3GainException::class)
     fun analyzeGain(files: List<String>, thread: MP3GainThread? = null): List<RecommendedGainChange> {
-        logger.info("Apply Album gain to: $files; targetDB: $targetDB")
+        logger.debug("Apply Album gain to: $files; targetDB: $targetDB")
         try {
             if (files.size > MAX_FILES)
                 throw IllegalArgumentException("Can't process more than 15 files. Given: ${files.size}")
@@ -264,7 +263,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
                 cmd.addAll(listOf("-d", (targetDB - 89).toString()))
             cmd.addAll(files)
 
-            logger.info("call: ${cmd.toList()}")
+            logger.debug("call: ${cmd.toList()}")
             val currentProcess = Runtime.getRuntime().exec(cmd.toTypedArray())
 
             // if error stream is not used this will not work
@@ -273,7 +272,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
                 thread.start()
             } else {
                 BufferedReader(InputStreamReader(currentProcess.errorStream)).forEachLine {
-                    if (it.isNotBlank()) logger.info(it)
+                    if (it.isNotBlank()) logger.debug(it)
                 }
             }
 
@@ -316,7 +315,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
     @JvmOverloads
     @Throws(MP3GainException::class)
     fun addGain(files: List<String>, gain: Int, thread: MP3GainThread? = null): List<AddGainChange> {
-        logger.info("Add $gain gain to: $files")
+        logger.debug("Add $gain gain to: $files")
         try {
             if (files.size > MAX_FILES)
                 throw IllegalArgumentException("Can't process more than 15 files. Given: ${files.size}")
@@ -326,7 +325,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
                 cmd.add("-p")
             cmd.addAll(files)
 
-            logger.info("call: ${cmd.toList()}")
+            logger.debug("call: ${cmd.toList()}")
             val currentProcess = Runtime.getRuntime().exec(cmd.toTypedArray())
 
             // if error stream is not used this will not work
@@ -335,7 +334,7 @@ class MP3Gain @JvmOverloads constructor(var mp3gainPath: String,
                 thread.start()
             } else {
                 BufferedReader(InputStreamReader(currentProcess.errorStream)).forEachLine {
-                    if (it.isNotBlank()) logger.info(it)
+                    if (it.isNotBlank()) logger.debug(it)
                 }
             }
 
